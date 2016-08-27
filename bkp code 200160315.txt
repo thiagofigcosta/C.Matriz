@@ -1,0 +1,445 @@
+funções:
+	soma
+	multiplicação de escalar
+	multiplicação
+	traço
+	transposta
+	inversa 2x2
+	determinante 3x3
+	determinante 2x2
+__________________________________________
+#include <iostream>
+#include <locale.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <string>
+//#include <conio.h>
+
+#define mtzSize 10
+#define strSize 100
+
+using namespace std;
+
+float matrizaux [mtzSize][mtzSize];
+int ma_n=-1; //linhas
+int ma_m=-1; //colunas
+
+
+float matriz1 [mtzSize][mtzSize];
+int m1_n=-1; //linhas
+int m1_m=-1; //colunas
+
+float matriz2 [mtzSize][mtzSize];
+int m2_n=-1; //linhas
+int m2_m=-1; //colunas
+
+
+char stringmatriz[strSize];
+char command[strSize];
+int lastmtzidx=0;
+bool tudopiranha=1;
+
+int main()
+{
+    void get_matriz();
+    void resetvar();
+    while(tudopiranha){
+        cout<<"C.Matriz"<<endl<<"digite um comando (ex: help):"<<endl;
+        resetvar();
+        get_matriz();
+        cout<<endl;
+        cout<<endl;
+    }
+    return 0;
+}
+
+void resetvar(){
+    memset(stringmatriz,0,strSize);
+    lastmtzidx=0;
+    ma_n=-1;
+    ma_m=-1;
+    m1_n=-1;
+    m1_m=-1;
+    m2_n=-1;
+    m2_m=-1;
+
+    for(int i=0;i<mtzSize;i++)
+        for(int j=0;j<mtzSize;j++){
+            matrizaux[i][j]=0;
+            matriz1[i][j]=0;
+            matriz2[i][j]=0;
+        }
+}
+
+//1 0 0 1
+//0 1 0 2
+//0 0 1 3
+
+void get_matriz(){
+    // comando a11 a12|a21 a22|
+    void commandProcedure();
+    memset(command,0,strSize);
+    cin.getline(stringmatriz,strSize);                          strcpy(stringmatriz,"erl 1 0 0 1|0 1 0 12|0 0 1 3|");
+    for (int i=0;i<strlen(stringmatriz);i++)
+        if (stringmatriz[i]!=' ')
+            command[i]=stringmatriz[i];
+        else
+            i=strlen(stringmatriz);
+    commandProcedure();
+}
+
+void commandProcedure(){
+    void strtomatriz(int nmatriz);
+    bool isErl();
+
+    if (!stricmp(command,"transposta")){ //compara ignorando se  é maiusculo ou nao
+        strtomatriz(1);
+
+        for(int i=0;i<m1_n;i++)
+            for(int j=0;j<m1_m;j++)
+                matrizaux[i][j]=matriz1[i][j];
+        for(int i=0;i<m1_m;i++)
+            for(int j=0;j<m1_n;j++)
+                    matriz1[i][j]=matrizaux[j][i];
+        for(int i=0;i<m1_m;i++){
+            cout<<endl;
+            for(int j=0;j<m1_n;j++)
+                cout<<matriz1[i][j]<<" ";
+        }
+    }else if(!stricmp(command,"multiE")){ //multiplica por escalar
+        float escalar;
+        char aux[strSize];
+        int aux1=-1;
+        strtomatriz(1);
+        for(int i=lastmtzidx;i<strlen(stringmatriz);i++)
+            if(stringmatriz[i]!=' '&&stringmatriz[i]!='|'){
+                aux1++;
+                aux[aux1]=stringmatriz[i];
+            }
+
+        escalar=atof(aux);
+        for(int i=0;i<m1_n;i++){cout<<endl;
+            for(int j=0;j<m1_m;j++){
+                cout<<"("<<matriz1[i][j]<<")*("<<escalar<<") ";
+                matriz1[i][j]*=escalar;
+            }
+        }
+        cout<<endl<<endl<<"Resultado: ";
+        for(int i=0;i<m1_n;i++){
+            cout<<endl;
+            for(int j=0;j<m1_m;j++)
+                cout<<matriz1[i][j]<<" ";
+        }
+    }else if(!stricmp(command,"soma")){//soma de matrizes
+        strtomatriz(2);
+        if(m1_n==m2_n&&m1_m==m2_m){
+            for(int i=0;i<m1_n;i++){cout<<endl;
+                for(int j=0;j<m1_m;j++){
+                    cout<<"("<<matriz1[i][j]<<")+("<<matriz2[i][j]<<") ";
+                    matriz1[i][j]+=matriz2[i][j];
+                }
+            }
+            cout<<endl<<endl<<"Resultado: ";
+            for(int i=0;i<m1_n;i++){
+                cout<<endl;
+                for(int j=0;j<m1_m;j++)
+                    cout<<matriz1[i][j]<<" ";
+            }
+        }else cout<<endl<<"as matrizes devem ter o mesmo tamanho para realizar a soma"<<endl;
+    } else if(!stricmp(command,"multi")){
+        strtomatriz(2);
+        if(m2_n==m1_m){
+            for(int i=0;i<m1_n;i++)
+                for(int j=0;j<m1_m;j++)
+                    matrizaux[i][j]=matriz1[i][j];
+            for(int i=0;i<m1_n;i++)
+                for(int j=0;j<m1_m;j++)
+                    matriz1[i][j]=0;
+
+            for(int i=0;i<m2_n;i++){cout<<endl;
+                for(int j=0;j<m1_m;j++){
+                    for(int k=0;k<m1_m;k++){
+                        cout<<"("<<matrizaux[j][k]<<"*"<<matriz2[k][i]<<")";
+                        if(k!=m1_m-1)cout<<"+";
+                        matriz1[i][j]+=matrizaux[j][k]*matriz2[k][i];
+                    }cout<<" ";
+                }
+            }
+            cout<<endl<<endl<<"Resultado: ";
+            for(int i=0;i<m1_n;i++){
+                    cout<<endl;
+                    for(int j=0;j<m2_m;j++)
+                        cout<<matriz1[j][i]<<" ";
+                }
+        }else cout<<endl<<"o n de colunas da primeira deve ser igual ao n de linhas da segunda"<<endl;
+    } else if(!stricmp(command,"tr")||!stricmp(command,"traco")){
+        strtomatriz(1);
+        float traco;
+        for(int i=0;i<m1_n;i++)
+                for(int j=0;j<m1_m;j++)
+                    if(i==j)
+                        traco+=matriz1[i][j];
+        cout<<traco;
+    } else if(!stricmp(command,"det22")){
+        strtomatriz(1);
+        float det;
+        float aux1=0,aux2=0;
+        if(m1_n==2&&m1_m==2){
+            aux1=matriz1[0][0]*matriz1[1][1];
+            aux2=matriz1[0][1]*matriz1[1][0];
+            cout<<"det=a*c-b*d  "<<aux1<<"-("<<aux2<<")";
+            det=aux1-aux2;
+            cout<<endl<<endl<<"Resultado: "<<det;
+        }else cout<<endl<<"a matriz deve ser 2x2"<<endl;
+    }else if(!stricmp(command,"det33")){
+        strtomatriz(1);
+        float det;
+        float aux1=0,aux2=0;
+        if(m1_n==3&&m1_m==3){
+            aux1=(matriz1[0][0]*matriz1[1][1]*matriz1[2][2])+(matriz1[0][1]*matriz1[1][2]*matriz1[2][0])+(matriz1[0][2]*matriz1[1][0]*matriz1[2][1]);
+            aux2=(matriz1[0][1]*matriz1[1][0]*matriz1[2][2])+(matriz1[0][0]*matriz1[1][2]*matriz1[2][1])+(matriz1[0][2]*matriz1[1][1]*matriz1[2][0]);
+            cout<<"a b c|a b"<<endl<<"d e f|d e"<<endl<<"g h i|g h"<<endl;
+            cout<<"det=(a*e*i)+(b*f*g)+(c*d*h)-(b*d*i)-(a*f*h)-(c*e*g)  "<<aux1<<"-("<<aux2<<")";
+            det=aux1-aux2;
+            cout<<endl<<endl<<"Resultado: "<<det;
+        }else cout<<endl<<"a matriz deve ser 3x3"<<endl;
+    }else if(!stricmp(command,"inv22")){
+        strtomatriz(1);
+        float det;
+        float aux1=0,aux2=0;
+        if(m1_n==2&&m1_m==2){
+            aux1=matriz1[0][0]*matriz1[1][1];
+            aux2=matriz1[0][1]*matriz1[1][0];
+            cout<<"inv=1/(det)*  d -b"<<endl<<"             -c  a"<<endl;
+            det=aux1-aux2;
+            cout<<"1/"<<det<<"*(d-b|-ca|)";
+            for(int i=0;i<m1_n;i++)
+                for(int j=0;j<m1_m;j++)
+                    matriz1[i][j]*=1/det;
+            aux1=matriz1[0][1];
+            aux2=matriz1[1][0];
+            if(aux1!=0)aux1*=-1;
+            if(aux2!=0)aux2*=-1;
+            cout<<endl<<endl<<"Resultado: \n"<<matriz1[1][1]<<" "<<aux1<<"\n"<<aux2<<" "<<matriz1[0][0];
+        }else cout<<endl<<"a matriz deve ser 2x2"<<endl;
+    }else if(!stricmp(command,"erl")){
+        strtomatriz(1);
+        int currentline=0;
+        int currentcol=0;
+        int current0,aux2=0;
+        float aux1;
+        while(!isErl()){
+            current0=0;
+            aux2=0;
+            for(int k=0;k<m1_m;k++)
+                if(matriz1[currentline][k]!=0){
+                    current0++;
+                    if(matriz1[currentline][k]!=1&&aux2==0){
+                        aux1=matriz1[currentline][k];
+                        currentcol=k;
+                        cout<<"L"<<currentline+1<<"/"<<aux1<<endl;
+                        for(int j=0;j<m1_m;j++)
+                            matriz1[currentline][j]/=aux1;
+                    }else if(aux2==0){
+                        aux2++;
+                        currentcol=k;
+                    }
+                }
+            if(current0==0){
+                for (int i=currentline;i<m1_n-1;i++)
+                    for(int j=0;j<m1_m;j++)
+                        matriz1[i][j]=matriz1[i+1][j];
+                for(int j=0;j<m1_m;j++)
+                        matriz1[m1_n][j]=0;
+            }else{                                                      //erro
+                for(int k=0;k<m1_n;k++)
+                    if(matriz1[k][currentcol]!=0&&k!=currentline){
+                        aux1=matriz1[k][currentcol];
+                        if(aux1>0)
+                            aux1+=-1;
+                        cout<<"L"<<k+1<<"+"<<aux1<<"L"<<currentline+1<<endl;
+                        for(int i=0;i<m1_m;i++)
+                            matriz1[k][i]+=matriz1[currentline][i]*aux1;
+                    }
+            }
+            currentline++;
+            if(currentline>=m1_n)currentline=0;
+        }
+        cout<<endl<<endl<<"Resultado: ";
+        for(int i=0;i<m1_n;i++){
+            cout<<endl;
+            for(int j=0;j<m1_m;j++)
+                cout<<matriz1[i][j]<<" ";
+        }
+    }
+    else{
+        cout<<endl<<"comando desconhecido, tente digitar help";
+    }
+}
+
+void strtomatriz(int nmatriz){
+    char aux[strSize];
+    int aux1=-1;
+    int aux2=-1;
+    if(nmatriz>=1){
+        aux1=-1;
+        aux2=-1;
+        m1_n++;
+        m1_m++;
+        memset(aux,0,strSize);
+        for (int i=strlen(command);i<strlen(stringmatriz);i++){
+            if(stringmatriz[i]=='&'){lastmtzidx=i+1;i=strlen(stringmatriz);}
+            else if(stringmatriz[i]!=' '&&stringmatriz[i]!='|'){
+                aux1++;
+                aux[aux1]=stringmatriz[i];
+            }else if(strcmp(aux,"")){
+                if(m1_n==0)m1_m++;
+                aux2++;
+                aux1=-1;
+                matriz1[m1_n][aux2]=atof(aux);
+                memset(aux,0,strSize); lastmtzidx=i;
+                if(stringmatriz[i]!=' '){
+                  m1_n++;
+                  aux2=-1;
+                }
+            }
+        }
+    }
+
+    if(nmatriz>=2){
+        aux1=-1;
+        aux2=-1;
+        m2_n++;
+        m2_m++;
+        memset(aux,0,strSize);
+        for (int i=lastmtzidx;i<strlen(stringmatriz);i++){
+            if(stringmatriz[i]=='&'){lastmtzidx=i+1;i=strlen(stringmatriz);}
+            else if(stringmatriz[i]!=' '&&stringmatriz[i]!='|'){
+                aux1++;
+                aux[aux1]=stringmatriz[i];
+            }else if(strcmp(aux,"")){
+                if(m2_n==0)m2_m++;
+                aux2++;
+                aux1=-1;
+                matriz2[m2_n][aux2]=atof(aux);
+                memset(aux,0,strSize); lastmtzidx=i;
+                if(stringmatriz[i]!=' '){
+                  m2_n++;
+                  aux2=-1;
+                }
+            }
+        }
+    }
+}
+
+bool isErl(){ //erro
+    int last_j=-1;
+    int currentj=0;
+    int erl=0;
+    int zeros;
+
+    for(int i=0;i<m1_n;i++){
+        zeros=0;
+        for(int j=0;j<m1_m;j++)
+            if(matriz1[i][j]!=0){
+                    currentj=j;
+                if(matriz1[i][j]!=1){
+                    erl=0;j=m1_m;i=m1_n;
+                }else{
+                    for (int k=0;k<m1_n;k++)
+                        if(matriz1[k][j]!=0&&k!=i){
+                            erl=0;j=m1_m;i=m1_n;k=m1_n;
+                        }
+                    if(last_j>currentj){
+                        erl=0;j=m1_m;i=m1_n;
+                    }else{
+                        erl=1;j=m1_m;
+                        last_j=currentj;
+                    }
+                }
+            }else{
+                zeros++;
+                if(zeros>=m1_m){
+                    erl=0;j=m1_m;i=m1_n;
+                }
+            }
+    }
+    return erl;
+}
+/*
+bool erl=0;
+    int aux,aux1,aux2,aux3=0;
+    for(int i=0;i<m1_n;i++)
+        for(int j=0;j<m1_m;j++)
+            if(matriz1[i][j]!=0)
+                if(matriz1[i][j]!=1){
+                    erl=0;j=m1_m;i=m1_n;cout<<"not1";
+                }else{
+                    aux=0;
+                    for(int k=0;k<m1_n;k++)
+                        if(matriz1[k][j]!=0)aux++;
+                    if(aux>1){
+                        erl=0;j=m1_m;i=m1_n;cout<<"not2 "<<aux<<"   "<<i<<j<<endl;
+                    }else{
+                        if(aux3==0){
+                            aux1=j;
+                            aux3=1;
+                        }else{
+                           aux2=j;
+                            if(aux1<aux2){
+                                erl=0;j=m1_m;i=m1_n; cout<<"not3";
+                            }else{
+                                erl=1;j=m1_m; cout<<"erl";
+                                aux1=aux2;
+                            }
+                        }
+                    }
+                }
+*/
+
+/*
+else if(!stricmp(command,"erl")){
+        strtomatriz(1);
+        int currentline=0;
+        int currentcol=0;
+        int current0,aux1;
+        while(!isErl()){
+            current0=0;
+            for(int k=0;k<m1_m;k++)
+                if(matriz1[currentline][k]!=0){
+                    current0++;
+                    currentcol=k;
+                    if(matriz1[currentline][k]!=1){
+                        aux1=matriz1[currentline][k];
+                        cout<<"L"<<currentline+1<<"/"<<aux1<<endl;
+                        for(int j=0;j<m1_m;j++)
+                            matriz1[currentline][j]/=aux1;
+                    }
+                }
+            if(current0==0){
+                for (int i=currentline;i<m1_n-1;i++)
+                    for(int j=0;j<m1_m;j++)
+                        matriz1[i][j]=matriz1[i+1][j];
+                for(int j=0;j<m1_m;j++)
+                        matriz1[m1_n][j]=0;
+            }else{
+                for(int k=0;k<m1_n;k++)
+                    if(matriz1[k][currentcol]!=0){
+                        aux1=-1*matriz1[k][currentcol];
+                        cout<<"L"<<k+1<<"+"<<aux1<<"L"<<currentline+1<<endl;
+                        for(int i=0;i<m1_m;i++)
+                            matriz1[k][i]+=matriz1[k][i]*aux1;
+                    }
+            }
+            currentline++;
+            if(currentline>=m1_n){currentline=0; break;}
+        }
+        cout<<endl<<endl<<"Resultado: ";
+        for(int i=0;i<m1_n;i++){
+            cout<<endl;
+            for(int j=0;j<m2_m;j++)
+                cout<<matriz1[i][j]<<" ";
+        }
+    }
+    */

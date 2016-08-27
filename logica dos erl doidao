@@ -1,0 +1,20 @@
+2 0 1
+2 1 2
+0 0 1
+primeiro numero diferente de 0, se for diferente de 1, dividir ele por ele mesmo
+1 0 1
+2 1 2
+0 0 1
+verificar se abxaixo e acima há algum numero diferente de 0, se houver, somar nessa linha a linha do do primeiro numero vezes a propria linha -1
+1 0 1
+0 1 0
+0 0 1
+ok? ok.. proxima linha
+primeiro numero diferente de 0, se for diferente de 1, dividir ele por ele mesmo
+verificar se abxaixo e acima há algum numero diferente de 0, se houver, somar nessa linha a linha do do primeiro numero vezes a propria linha -1
+ok? ok.. proxima linha
+primeiro numero diferente de 0, se for diferente de 1, dividir ele por ele mesmo
+verificar se abxaixo e acima há algum numero diferente de 0, se houver, somar nessa linha a linha do do primeiro numero vezes a propria linha -1
+1 0 0
+0 1 0
+0 0 1
